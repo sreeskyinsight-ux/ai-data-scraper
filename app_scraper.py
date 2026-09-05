@@ -104,23 +104,7 @@ st.markdown("""
         transform: translateY(-2px) !important;
     }
 
-    /* Tombol Download Laporan */
-    div.stDownloadButton > button {
-        background: linear-gradient(135deg, #059669 0%, #0d9488 100%) !important;
-        color: #ffffff !important;
-        padding: 8px 18px !important;
-        font-size: 0.9rem !important;
-        border-radius: 8px !important;
-        border: none !important;
-        font-weight: 600 !important;
-        box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3) !important;
-    }
-    
-    div.stDownloadButton > button:hover {
-        background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%) !important;
-    }
-
-    /* Kartu Kontainer Hasil Laporan */
+    /* Kartu Kontainer Hasil Laporan / Gambar */
     .report-card {
         background: rgba(15, 23, 42, 0.85);
         border: 1px solid rgba(56, 189, 248, 0.2);
@@ -128,15 +112,6 @@ st.markdown("""
         border-radius: 16px;
         margin-top: 2rem;
         box-shadow: 0 15px 30px -10px rgba(0,0,0,0.5);
-    }
-    
-    /* Login Card Container Center */
-    .login-card {
-        background: rgba(15, 23, 42, 0.85);
-        border: 1px solid rgba(56, 189, 248, 0.25);
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
     }
     </style>
 """, unsafe_allow_html=True)
@@ -165,11 +140,10 @@ if not st.session_state.logged_in:
             <div style='text-align: center; margin-bottom: 2rem;'>
                 <div style='font-size: 3rem; margin-bottom: 0.5rem;'>🛡️</div>
                 <h1 style='font-size: 2.2rem !important;'>CyberIntel AI</h1>
-                <p style='color: #94a3b8; font-size: 0.95rem;'>Enterprise Intelligence & Web Scraper System</p>
+                <p style='color: #94a3b8; font-size: 0.95rem;'>Enterprise Intelligence & Visual Generator System</p>
             </div>
         """, unsafe_allow_html=True)
         
-        # Shortcut Demo Cepat
         st.info("⚡ **Akses Cepat Demo (Instan):**")
         dcol1, dcol2 = st.columns(2)
         with dcol1:
@@ -244,109 +218,128 @@ with st.sidebar:
     )
     
     st.divider()
-    st.markdown("### 📂 Arsip Kasus")
+    st.markdown("### 📂 Arsip Investigasi")
     if len(st.session_state.history) == 0:
-        st.caption("Belum ada arsip investigasi.")
+        st.caption("Belum ada arsip tersimpan.")
     else:
         for i, item in enumerate(st.session_state.history):
-            if st.button(f"📁 {item['target'][:20]}...", key=f"hist_{i}"):
-                st.session_state.active_report = item['result']
+            icon = "🎨" if item['type'] == "image" else "📁"
+            if st.button(f"{icon} {item['target'][:18]}...", key=f"hist_{i}"):
+                st.session_state.active_result = item['result']
                 st.session_state.active_target = item['target']
-
-    if st.session_state.current_role == "Administrator":
-        st.divider()
-        st.markdown("### 🛠️ Admin Panel")
-        with st.expander("Kelola Pengguna"):
-            st.write("Database Agen Aktif:")
-            for u, data in st.session_state.users_db.items():
-                st.text(f"• {u} ({data['role']})")
-            
-            new_user = st.text_input("Email Baru", placeholder="nama@domain.com")
-            new_pass = st.text_input("Password Baru", type="password")
-            if st.button("Tambah Agen Baru"):
-                if new_user and new_pass:
-                    st.session_state.users_db[new_user] = {
-                        "password": new_pass, 
-                        "role": "Agent"
-                    }
-                    st.success(f"Agen {new_user} ditambahkan!")
-                    st.rerun()
-                else:
-                    st.warning("Lengkapi data form.")
+                st.session_state.active_type = item['type']
 
 # Tampilan Konten Utama
-st.markdown("<h1>🕵️‍♂️ CyberIntel AI: Web Intelligence</h1>", unsafe_allow_html=True)
-st.markdown("<p style='color: #94a3b8; font-size: 1.05rem; margin-bottom: 30px;'>Sistem investigasi berbasis AI cerdas untuk ekstraksi data web, riset kompetitor, dan analisis intelijen mendalam.</p>", unsafe_allow_html=True)
+st.markdown("<h1>🕵️‍♂️ CyberIntel AI: Web & Visual Suite</h1>", unsafe_allow_html=True)
+st.markdown("<p style='color: #94a3b8; font-size: 1.05rem; margin-bottom: 30px;'>Sistem investigasi berbasis AI cerdas untuk ekstraksi data web, analisis mendalam, serta pembuatan gambar visual operasional.</p>", unsafe_allow_html=True)
 
 with st.form("scraper_form"):
     target_query = st.text_input(
-        "Target Investigasi / Topik Web:",
-        placeholder="Contoh: Analisis tren harga produk teknologi terbaru"
+        "Target Investigasi / Deskripsi Gambar:",
+        placeholder="Contoh: Desain konsep futuristik kota cyber intelijen modern"
     )
     
     task_type = st.selectbox(
-        "Protokol Investigasi:",
-        ["Rangkuman Intelijen Berita", "Ekstraksi Data & Profiling Kompetitor", "Analisis Dokumen Mendalam"]
+        "Protokol Operasi:",
+        [
+            "Rangkuman Intelijen Berita", 
+            "Ekstraksi Data & Profiling Kompetitor", 
+            "Analisis Dokumen Mendalam",
+            "🎨 Pembuat Gambar AI (Visual Generator)"
+        ]
     )
     
-    submitted = st.form_submit_button("🔍 Jalankan Operasi Intelijen")
+    submitted = st.form_submit_button("🚀 Jalankan Operasi")
 
 if submitted:
     if not api_key:
         st.warning("⚠️ Kesalahan Sistem: OpenRouter API Key belum dikonfigurasi di secrets.")
     elif not target_query:
-        st.warning("⚠️ Mohon masukkan target investigasi terlebih dahulu.")
+        st.warning("⚠️ Mohon masukkan target investigasi atau deskripsi gambar terlebih dahulu.")
     else:
-        with st.spinner(f"🛡️ Agen sedang mengeksekusi investigasi via {selected_model}..."):
-            try:
-                client = OpenAI(
-                    base_url="https://openrouter.ai/api/v1",
-                    api_key=api_key,
-                )
-                
-                prompt = f"""
-                Bertindaklah sebagai Detektif Data Senior dan Kepala Intelijen Riset Profesional.
-                Protokol Tugas: {task_type}
-                Target Investigasi: {target_query}
-                
-                Berikan laporan investigasi yang tajam, mendalam, berbasis data, dan terstruktur rapi menggunakan format markdown ala laporan intelijen profesional.
-                """
-                
-                response = client.chat.completions.create(
-                    model=selected_model,
-                    messages=[
-                        {"role": "system", "content": "Kamu adalah agen intelijen data dan riset profesional yang analitis."},
-                        {"role": "user", "content": prompt}
-                    ]
-                )
-                
-                hasil_ai = response.choices[0].message.content
-                
-                st.session_state.history.insert(0, {
-                    "target": target_query,
-                    "result": hasil_ai,
-                    "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-                })
-                
-                st.session_state.active_report = hasil_ai
-                st.session_state.active_target = target_query
-                
-            except Exception as e:
-                st.error(f"Gagal terhubung ke jaringan AI: {e}")
+        if task_type == "🎨 Pembuat Gambar AI (Visual Generator)":
+            with st.spinner("🎨 Agen sedang merender gambar visual via DALL-E 3..."):
+                try:
+                    # Menggunakan klien OpenAI untuk memanggil DALL-E 3
+                    client_img = OpenAI(api_key=api_key)
+                    response_img = client_img.images.generate(
+                        model="dall-e-3",
+                        prompt=target_query,
+                        size="1024x1024",
+                        quality="standard",
+                        n=1,
+                    )
+                    image_url = response_img.data[0].url
+                    
+                    st.session_state.history.insert(0, {
+                        "target": target_query,
+                        "result": image_url,
+                        "type": "image",
+                        "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                    })
+                    
+                    st.session_state.active_result = image_url
+                    st.session_state.active_target = target_query
+                    st.session_state.active_type = "image"
+                except Exception as e:
+                    st.error(f"Gagal menghasilkan gambar. Pastikan API key Anda mendukung DALL-E 3: {e}")
+        else:
+            with st.spinner(f"🛡️ Agen sedang mengeksekusi investigasi via {selected_model}..."):
+                try:
+                    client = OpenAI(
+                        base_url="https://openrouter.ai/api/v1",
+                        api_key=api_key,
+                    )
+                    
+                    prompt = f"""
+                    Bertindaklah sebagai Detektif Data Senior dan Kepala Intelijen Riset Profesional.
+                    Protokol Tugas: {task_type}
+                    Target Investigasi: {target_query}
+                    
+                    Berikan laporan investigasi yang tajam, mendalam, berbasis data, dan terstruktur rapi menggunakan format markdown ala laporan intelijen profesional.
+                    """
+                    
+                    response = client.chat.completions.create(
+                        model=selected_model,
+                        messages=[
+                            {"role": "system", "content": "Kamu adalah agen intelijen data dan riset profesional yang analitis."},
+                            {"role": "user", "content": prompt}
+                        ]
+                    )
+                    
+                    hasil_ai = response.choices[0].message.content
+                    
+                    st.session_state.history.insert(0, {
+                        "target": target_query,
+                        "result": hasil_ai,
+                        "type": "text",
+                        "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                    })
+                    
+                    st.session_state.active_result = hasil_ai
+                    st.session_state.active_target = target_query
+                    st.session_state.active_type = "text"
+                    
+                except Exception as e:
+                    st.error(f"Gagal terhubung ke jaringan AI: {e}")
 
-if "active_report" in st.session_state:
+if "active_result" in st.session_state:
     st.markdown('<div class="report-card">', unsafe_allow_html=True)
-    col1, col2 = st.columns([3, 1])
-    with col1:
-        st.markdown(f"### 🗂️ Berkas Laporan: *{st.session_state.get('active_target', '')}*")
-    with col2:
-        st.download_button(
-            label="📥 Unduh Laporan (.md)",
-            data=st.session_state.active_report,
-            file_name=f"laporan_cyberintel_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.md",
-            mime="text/markdown"
-        )
-    
-    st.divider()
-    st.markdown(st.session_state.active_report)
+    if st.session_state.get("active_type") == "image":
+        st.markdown(f"### 🎨 Hasil Render Visual: *{st.session_state.get('active_target', '')}*")
+        st.divider()
+        st.image(st.session_state.active_result, caption=st.session_state.get('active_target', ''), use_container_width=True)
+    else:
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            st.markdown(f"### 🗂️ Berkas Laporan: *{st.session_state.get('active_target', '')}*")
+        with col2:
+            st.download_button(
+                label="📥 Unduh Laporan (.md)",
+                data=st.session_state.active_result,
+                file_name=f"laporan_cyberintel_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.md",
+                mime="text/markdown"
+            )
+        st.divider()
+        st.markdown(st.session_state.active_result)
     st.markdown('</div>', unsafe_allow_html=True)

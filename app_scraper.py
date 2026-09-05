@@ -9,7 +9,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Kustomisasi CSS Profesional & Elegan
+# Kustomisasi CSS Profesional & Elegan (Termasuk perbaikan label teks input & tombol)
 st.markdown("""
     <style>
     /* Latar belakang utama */
@@ -36,7 +36,14 @@ st.markdown("""
         border: 1px solid #334155;
     }
     
-    /* Perbaikan Mutlak Tombol: Latar Biru Terang & Teks Gelap Kontras */
+    /* Memperjelas Label Input (Username & Password) */
+    .stTextInput label {
+        color: #38bdf8 !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+    }
+    
+    /* Perbaikan Tombol Utama: Latar Biru Terang & Teks Gelap Kontras */
     div.stButton > button, div.stFormSubmitButton > button {
         background-color: #38bdf8 !important;
         color: #0f172a !important;
@@ -68,7 +75,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 1. Inisialisasi Database Pengguna di Session State (Termasuk Akun Admin)
+# 1. Inisialisasi Database Pengguna di Session State
 if "users_db" not in st.session_state:
     st.session_state.users_db = {
         "admin": {"password": "adminpassword123", "role": "Administrator", "joined": "2026-06-01"},
@@ -83,6 +90,12 @@ if "logged_in" not in st.session_state:
 if "history" not in st.session_state:
     st.session_state.history = []
 
+# Inisialisasi state untuk auto-fill demo jika belum ada
+if "input_user" not in st.session_state:
+    st.session_state.input_user = ""
+if "input_pass" not in st.session_state:
+    st.session_state.input_pass = ""
+
 # --- HALAMAN LOGIN ---
 if not st.session_state.logged_in:
     col1, col2, col3 = st.columns([1, 1.2, 1])
@@ -92,8 +105,8 @@ if not st.session_state.logged_in:
         st.caption("Masukkan kredensial otorisasi agen Anda.")
         
         with st.form("login_form"):
-            username_input = st.text_input("Username")
-            password_input = st.text_input("Password", type="password")
+            username_input = st.text_input("Username", value=st.session_state.input_user)
+            password_input = st.text_input("Password", type="password", value=st.session_state.input_pass)
             login_btn = st.form_submit_button("Masuk Sistem")
             
             if login_btn:
@@ -105,17 +118,30 @@ if not st.session_state.logged_in:
                     st.rerun()
                 else:
                     st.error("Username atau Password salah!")
+        
+        # Tombol Bantuan / Shortcut Kredensial Demo di bawah form
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("⚡ **Shortcut Akses Cepat (Demo):**")
+        bcol1, bcol2 = st.columns(2)
+        with bcol1:
+            if st.button("🔑 Isi Akun Admin"):
+                st.session_state.input_user = "admin"
+                st.session_state.input_pass = "adminpassword123"
+                st.rerun()
+        with bcol2:
+            if st.button("🔑 Isi Akun Agent"):
+                st.session_state.input_user = "detektif1"
+                st.session_state.input_pass = "password123"
+                st.rerun()
+                
         st.stop()
 
 # --- HALAMAN UTAMA SETELAH LOGIN ---
-
-# Mengambil API key secara aman
 try:
     api_key = st.secrets["OPENROUTER_API_KEY"]
 except Exception:
     api_key = None
 
-# Sidebar Kontrol & Admin Panel
 with st.sidebar:
     st.markdown(f"👤 **Agent:** `{st.session_state.current_user}`")
     st.markdown(f"🏷️ **Role:** `{st.session_state.current_role}`")
@@ -146,7 +172,6 @@ with st.sidebar:
                 st.session_state.active_report = item['result']
                 st.session_state.active_target = item['target']
 
-    # --- FITUR KHUSUS ADMIN: MANAJEMEN USER ---
     if st.session_state.current_role == "Administrator":
         st.divider()
         st.subheader("🛠️ Admin Panel: Database User")
@@ -169,7 +194,6 @@ with st.sidebar:
                 else:
                     st.warning("Isi lengkap username & password.")
 
-# Konten Utama Aplikasi
 st.title("🕵️‍♂️ CyberIntel AI: Web Intelligence & Scraper")
 st.markdown("Sistem investigasi berbasis AI cerdas untuk ekstraksi data web, riset kompetitor, dan analisis mendalam.")
 

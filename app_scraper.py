@@ -9,10 +9,10 @@ st.set_page_config(
     layout="wide"
 )
 
-# Kustomisasi CSS Profesional, Elegan, Tombol Compact, & Warna Hidup
+# Kustomisasi CSS Profesional & Elegan (Memperbaiki Warna Tombol & Kontras)
 st.markdown("""
     <style>
-    /* Latar belakang utama yang lebih modern & kontras pas */
+    /* Latar belakang utama */
     .stApp {
         background-color: #0f172a;
         color: #f8fafc;
@@ -29,40 +29,42 @@ st.markdown("""
     }
     
     /* Kartu & Container Form */
-    .stForm, div[data-testid="stVerticalBlock"] > div.stMarkdown {
+    .stForm {
         background-color: #1e293b;
+        padding: 24px;
         border-radius: 12px;
         border: 1px solid #334155;
     }
     
-    /* Ukuran Tombol Compact & Profesional */
+    /* Perbaikan Tombol: Pastikan warna teks kontras dan jelas */
     .stButton>button {
-        background-color: #2563eb;
-        color: white;
-        padding: 4px 14px;
-        font-size: 13px;
+        background-color: #38bdf8 !important;
+        color: #0f172a !important;
+        padding: 6px 16px;
+        font-size: 14px;
         border-radius: 6px;
         border: none;
-        font-weight: 500;
+        font-weight: 600;
         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         transition: all 0.2s ease;
     }
     .stButton>button:hover {
-        background-color: #1d4ed8;
-        color: #ffffff;
+        background-color: #7dd3fc !important;
+        color: #0f172a !important;
     }
     
     /* Tombol Download */
     .stDownloadButton>button {
-        background-color: #0d9488;
-        color: #ffffff;
+        background-color: #0d9488 !important;
+        color: #ffffff !important;
         padding: 4px 12px;
         font-size: 12px;
         border-radius: 6px;
         border: none;
+        font-weight: 600;
     }
     .stDownloadButton>button:hover {
-        background-color: #0f766e;
+        background-color: #0f766e !important;
     }
     </style>
 """, unsafe_allow_html=True)

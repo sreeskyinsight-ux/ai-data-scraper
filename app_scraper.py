@@ -4,87 +4,127 @@ import datetime
 
 # Konfigurasi Halaman
 st.set_page_config(
-    page_title="Detective AI - Intelligence Agency",
-    page_icon="🕵️‍♂️",
+    page_title="CyberIntel AI - Intelligence Agency",
+    page_icon="🛡️",
     layout="wide"
 )
 
-# Kustomisasi CSS Profesional & Elegan (Tombol Proporsional & Estetika Dark Detective)
+# Kustomisasi CSS Profesional, Elegan, Tombol Compact, & Warna Hidup
 st.markdown("""
     <style>
-    /* Latar belakang utama dan sidebar */
+    /* Latar belakang utama yang lebih modern & kontras pas */
     .stApp {
-        background-color: #0b0f19;
-        color: #e2e8f0;
+        background-color: #0f172a;
+        color: #f8fafc;
     }
     [data-testid="stSidebar"] {
-        background-color: #111827;
-        border-right: 1px solid #1f2937;
+        background-color: #1e1b4b;
+        border-right: 1px solid #312e81;
     }
     
-    /* Header */
+    /* Header & Judul */
     h1, h2, h3 {
         color: #38bdf8 !important;
         font-family: 'Inter', sans-serif;
     }
     
-    /* Kotak Form Utama */
-    .stForm {
-        background-color: #111827;
-        padding: 24px;
+    /* Kartu & Container Form */
+    .stForm, div[data-testid="stVerticalBlock"] > div.stMarkdown {
+        background-color: #1e293b;
         border-radius: 12px;
-        border: 1px solid #1f2937;
+        border: 1px solid #334155;
     }
     
-    /* Ukuran Tombol yang Proporsional & Elegan */
+    /* Ukuran Tombol Compact & Profesional */
     .stButton>button {
-        background-color: #0284c7;
+        background-color: #2563eb;
         color: white;
-        padding: 6px 16px;
-        font-size: 14px;
+        padding: 4px 14px;
+        font-size: 13px;
         border-radius: 6px;
         border: none;
         font-weight: 500;
-        transition: background-color 0.2s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        transition: all 0.2s ease;
     }
     .stButton>button:hover {
-        background-color: #0369a1;
+        background-color: #1d4ed8;
         color: #ffffff;
     }
     
-    /* Styling Download Button agar serasi */
+    /* Tombol Download */
     .stDownloadButton>button {
-        background-color: #334155;
-        color: #f8fafc;
+        background-color: #0d9488;
+        color: #ffffff;
         padding: 4px 12px;
-        font-size: 13px;
+        font-size: 12px;
         border-radius: 6px;
-        border: 1px solid #475569;
+        border: none;
     }
     .stDownloadButton>button:hover {
-        background-color: #475569;
-        color: #ffffff;
+        background-color: #0f766e;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Inisialisasi Session State untuk Menyimpan Riwayat Investigasi
+# 1. Inisialisasi Database Pengguna di Session State (Termasuk Akun Admin)
+if "users_db" not in st.session_state:
+    st.session_state.users_db = {
+        "admin": {"password": "adminpassword123", "role": "Administrator", "joined": "2026-06-01"},
+        "detektif1": {"password": "password123", "role": "Agent", "joined": "2026-06-05"}
+    }
+
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+    st.session_state.current_user = ""
+    st.session_state.current_role = ""
+
 if "history" not in st.session_state:
     st.session_state.history = []
 
-# Judul Aplikasi
-st.title("🕵️‍♂️ Detective AI: Intelligence & Research Agency")
-st.markdown("Pusat intelijen berbasis AI untuk investigasi mendalam, ekstraksi data web, dan analisis kompetitor.")
+# --- HALAMAN LOGIN ---
+if not st.session_state.logged_in:
+    col1, col2, col3 = st.columns([1, 1.2, 1])
+    with col2:
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.markdown("## 🛡️ CyberIntel Secure Login")
+        st.caption("Masukkan kredensial otorisasi agen Anda.")
+        
+        with st.form("login_form"):
+            username_input = st.text_input("Username")
+            password_input = st.text_input("Password", type="password")
+            login_btn = st.form_submit_button("Masuk Sistem")
+            
+            if login_btn:
+                if username_input in st.session_state.users_db and st.session_state.users_db[username_input]["password"] == password_input:
+                    st.session_state.logged_in = True
+                    st.session_state.current_user = username_input
+                    st.session_state.current_role = st.session_state.users_db[username_input]["role"]
+                    st.success("Otorisasi Berhasil! Memuat sistem...")
+                    st.rerun()
+                else:
+                    st.error("Username atau Password salah!")
+        st.stop()
 
-# Mengambil API key secara aman di belakang layar
+# --- HALAMAN UTAMA SETELAH LOGIN ---
+
+# Mengambil API key secara aman
 try:
     api_key = st.secrets["OPENROUTER_API_KEY"]
 except Exception:
     api_key = None
 
-# Sidebar: Kontrol & Riwayat Investigasi
+# Sidebar Kontrol & Admin Panel
 with st.sidebar:
-    st.header("⚙️ Kontrol Operasi")
+    st.markdown(f"👤 **Agent:** `{st.session_state.current_user}`")
+    st.markdown(f"🏷️ **Role:** `{st.session_state.current_role}`")
+    
+    if st.button("🚪 Logout"):
+        st.session_state.logged_in = False
+        st.rerun()
+        
+    st.divider()
+    st.header("⚙️ Konfigurasi")
     
     selected_model = st.selectbox(
         "Pilih Model Agen:",
@@ -96,26 +136,46 @@ with st.sidebar:
     )
     
     st.divider()
-    st.subheader("📂 Arsip Kasus (History)")
-    
+    st.subheader("📂 Arsip Kasus")
     if len(st.session_state.history) == 0:
-        st.caption("Belum ada investigasi tersimpan.")
+        st.caption("Belum ada arsip investigasi.")
     else:
         for i, item in enumerate(st.session_state.history):
-            if st.button(f"📁 {item['target'][:22]}...", key=f"hist_{i}"):
+            if st.button(f"📁 {item['target'][:20]}...", key=f"hist_{i}"):
                 st.session_state.active_report = item['result']
                 st.session_state.active_target = item['target']
 
-    st.divider()
-    st.info("💡 **Status SaaS:** Akun Agen Aktif")
+    # --- FITUR KHUSUS ADMIN: MANAJEMEN USER ---
+    if st.session_state.current_role == "Administrator":
+        st.divider()
+        st.subheader("🛠️ Admin Panel: Database User")
+        with st.expander("Kelola Pengguna"):
+            st.write("Daftar Agen Terdaftar:")
+            for u, data in st.session_state.users_db.items():
+                st.text(f"- {u} ({data['role']})")
+            
+            new_user = st.text_input("Username Baru")
+            new_pass = st.text_input("Password Baru", type="password")
+            if st.button("Tambah Agen Baru"):
+                if new_user and new_pass:
+                    st.session_state.users_db[new_user] = {
+                        "password": new_pass, 
+                        "role": "Agent", 
+                        "joined": str(datetime.date.today())
+                    }
+                    st.success(f"Agen {new_user} berhasil ditambahkan!")
+                    st.rerun()
+                else:
+                    st.warning("Isi lengkap username & password.")
 
-# Area Utama (Form Input)
-st.subheader("🎯 Berikan Kasus / Target Riset")
+# Konten Utama Aplikasi
+st.title("🕵️‍♂️ CyberIntel AI: Web Intelligence & Scraper")
+st.markdown("Sistem investigasi berbasis AI cerdas untuk ekstraksi data web, riset kompetitor, dan analisis mendalam.")
 
 with st.form("scraper_form"):
     target_query = st.text_input(
-        "Target Investigasi / Topik:",
-        placeholder="Contoh: Tren produk digital paling menguntungkan tahun ini"
+        "Target Investigasi / Topik Web:",
+        placeholder="Contoh: Analisis tren harga produk digital terlaris"
     )
     
     task_type = st.selectbox(
@@ -123,8 +183,7 @@ with st.form("scraper_form"):
         ["Rangkuman Intelijen Berita", "Ekstraksi Data & Profiling Kompetitor", "Analisis Dokumen Mendalam"]
     )
     
-    # Tombol submit yang ukurannya sudah diproporsionalkan via CSS
-    submitted = st.form_submit_button("🔍 Jalankan Operasi AI")
+    submitted = st.form_submit_button("🔍 Jalankan Operasi")
 
 if submitted:
     if not api_key:
@@ -132,7 +191,7 @@ if submitted:
     elif not target_query:
         st.warning("⚠️ Mohon masukkan target investigasi terlebih dahulu.")
     else:
-        with st.spinner(f"🕵️‍♂️ Melacak dan menganalisis data menggunakan {selected_model}..."):
+        with st.spinner(f"🛡️ Agen sedang mengeksekusi investigasi via {selected_model}..."):
             try:
                 client = OpenAI(
                     base_url="https://openrouter.ai/api/v1",
@@ -157,7 +216,6 @@ if submitted:
                 
                 hasil_ai = response.choices[0].message.content
                 
-                # Simpan ke Session State History
                 st.session_state.history.insert(0, {
                     "target": target_query,
                     "result": hasil_ai,
@@ -168,20 +226,18 @@ if submitted:
                 st.session_state.active_target = target_query
                 
             except Exception as e:
-                st.error(f"Gagal terhubung ke pusat jaringan AI: {e}")
+                st.error(f"Gagal terhubung ke jaringan AI: {e}")
 
-# Menampilkan Laporan Aktif (Hasil Baru atau dari Riwayat)
 if "active_report" in st.session_state:
     st.divider()
     col1, col2 = st.columns([3, 1])
     with col1:
         st.markdown(f"### 🗂️ Berkas Laporan: *{st.session_state.get('active_target', '')}*")
     with col2:
-        # Tombol Download Laporan agar profesional
         st.download_button(
             label="📥 Unduh Laporan",
             data=st.session_state.active_report,
-            file_name=f"laporan_investigasi_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.md",
+            file_name=f"laporan_cyberintel_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.md",
             mime="text/markdown"
         )
     

@@ -75,11 +75,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 1. Inisialisasi Database Pengguna di Session State (Menggunakan email sebagai username)
+# 1. Inisialisasi Database Pengguna di Session State
 if "users_db" not in st.session_state:
     st.session_state.users_db = {
-        "admin@cyberintel.id": {"password": "adminpassword123", "role": "Administrator", "joined": "2026-06-01"},
-        "agent@cyberintel.id": {"password": "password123", "role": "Agent", "joined": "2026-06-05"}
+        "admin@cyberintel.id": {"password": "adminpassword123", "role": "Administrator"},
+        "agent@cyberintel.id": {"password": "password123", "role": "Agent"}
     }
 
 if "logged_in" not in st.session_state:
@@ -96,12 +96,11 @@ if not st.session_state.logged_in:
     with col2:
         st.markdown("<br><br>", unsafe_allow_html=True)
         st.markdown("## 🛡️ CyberIntel Secure Login")
-        st.caption("Masukkan kredensial otorisasi agen Anda.")
+        st.caption("Masukkan email dan password Anda untuk masuk sistem.")
         
-        # Tombol shortcut login instan menggunakan email
+        # Tombol shortcut login demo instan
         st.markdown("<br>", unsafe_allow_html=True)
-        st.info("💡 **Tips Cepat:** Pilih akun demo di bawah untuk login instan:")
-        
+        st.info("💡 **Akses Cepat Demo:**")
         dcol1, dcol2 = st.columns(2)
         with dcol1:
             if st.button("🔑 Login Admin"):
@@ -117,22 +116,30 @@ if not st.session_state.logged_in:
                 st.rerun()
                 
         st.markdown("---")
-        st.markdown("<p style='text-align:center; color:#94a3b8; font-size:13px;'>Atau login manual menggunakan email terdaftar:</p>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align:center; color:#94a3b8; font-size:13px;'>Atau gunakan email pribadi Anda (bebas):</p>", unsafe_allow_html=True)
         
         with st.form("login_form"):
-            username_input = st.text_input("Alamat Email", placeholder="contoh: agent@cyberintel.id")
-            password_input = st.text_input("Password", type="password", placeholder="••••••••••••")
+            username_input = st.text_input("Alamat Email", placeholder="contoh: sree.skyinsight@gmail.com")
+            password_input = st.text_input("Password", type="password", placeholder="Masukkan password bebas")
             login_btn = st.form_submit_button("Masuk Sistem")
             
             if login_btn:
-                if username_input in st.session_state.users_db and st.session_state.users_db[username_input]["password"] == password_input:
+                if username_input.strip() != "":
+                    # Jika email belum ada di database, otomatis daftarkan sebagai Agent baru
+                    if username_input not in st.session_state.users_db:
+                        st.session_state.users_db[username_input] = {
+                            "password": password_input if password_input else "123456",
+                            "role": "Agent"
+                        }
+                    
+                    # Berhasil masuk
                     st.session_state.logged_in = True
                     st.session_state.current_user = username_input
                     st.session_state.current_role = st.session_state.users_db[username_input]["role"]
                     st.success("Otorisasi Berhasil! Memuat sistem...")
                     st.rerun()
                 else:
-                    st.error("Alamat Email atau Password salah!")
+                    st.error("Alamat Email tidak boleh kosong!")
         st.stop()
 
 # --- HALAMAN UTAMA SETELAH LOGIN ---
@@ -185,8 +192,7 @@ with st.sidebar:
                 if new_user and new_pass:
                     st.session_state.users_db[new_user] = {
                         "password": new_pass, 
-                        "role": "Agent", 
-                        "joined": str(datetime.date.today())
+                        "role": "Agent"
                     }
                     st.success(f"Agen {new_user} berhasil ditambahkan!")
                     st.rerun()

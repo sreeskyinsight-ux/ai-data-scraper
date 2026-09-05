@@ -223,11 +223,12 @@ with st.sidebar:
         st.caption("Belum ada arsip tersimpan.")
     else:
         for i, item in enumerate(st.session_state.history):
-            icon = "🎨" if item['type'] == "image" else "📁"
+            item_type = item.get('type', 'text')
+            icon = "🎨" if item_type == "image" else "📁"
             if st.button(f"{icon} {item['target'][:18]}...", key=f"hist_{i}"):
                 st.session_state.active_result = item['result']
                 st.session_state.active_target = item['target']
-                st.session_state.active_type = item['type']
+                st.session_state.active_type = item_type
 
 # Tampilan Konten Utama
 st.markdown("<h1>🕵️‍♂️ CyberIntel AI: Web & Visual Suite</h1>", unsafe_allow_html=True)
@@ -260,7 +261,6 @@ if submitted:
         if task_type == "🎨 Pembuat Gambar AI (Visual Generator)":
             with st.spinner("🎨 Agen sedang merender gambar visual via DALL-E 3..."):
                 try:
-                    # Menggunakan klien OpenAI untuk memanggil DALL-E 3
                     client_img = OpenAI(api_key=api_key)
                     response_img = client_img.images.generate(
                         model="dall-e-3",

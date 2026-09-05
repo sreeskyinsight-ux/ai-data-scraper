@@ -12,6 +12,8 @@ st.set_page_config(
 # Kustomisasi CSS Profesional & Elegan (Memperbaiki Warna Tombol & Kontras)
 st.markdown("""
     <style>
+  st.markdown("""
+    <style>
     /* Latar belakang utama */
     .stApp {
         background-color: #0f172a;
@@ -36,34 +38,33 @@ st.markdown("""
         border: 1px solid #334155;
     }
     
-    /* Perbaikan Tombol: Pastikan warna teks kontras dan jelas */
-    .stButton>button {
+    /* Perbaikan Mutlak Tombol: Latar Biru Terang & Teks Gelap Kontras */
+    div.stButton > button, div.stFormSubmitButton > button {
         background-color: #38bdf8 !important;
         color: #0f172a !important;
-        padding: 6px 16px;
-        font-size: 14px;
-        border-radius: 6px;
-        border: none;
-        font-weight: 600;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        transition: all 0.2s ease;
+        padding: 6px 18px !important;
+        font-size: 14px !important;
+        border-radius: 6px !important;
+        border: none !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
     }
-    .stButton>button:hover {
+    div.stButton > button:hover, div.stFormSubmitButton > button:hover {
         background-color: #7dd3fc !important;
         color: #0f172a !important;
     }
     
     /* Tombol Download */
-    .stDownloadButton>button {
+    div.stDownloadButton > button {
         background-color: #0d9488 !important;
         color: #ffffff !important;
-        padding: 4px 12px;
-        font-size: 12px;
-        border-radius: 6px;
-        border: none;
-        font-weight: 600;
+        padding: 4px 12px !important;
+        font-size: 12px !important;
+        border-radius: 6px !important;
+        border: none !important;
+        font-weight: 600 !important;
     }
-    .stDownloadButton>button:hover {
+    div.stDownloadButton > button:hover {
         background-color: #0f766e !important;
     }
     </style>

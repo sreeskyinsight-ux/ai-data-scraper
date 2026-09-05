@@ -9,68 +9,122 @@ st.set_page_config(
     layout="wide"
 )
 
-# Kustomisasi CSS Profesional & Elegan
+# Kustomisasi CSS Tingkat Lanjut (Modern Dark Cyber-Enterprise Theme)
 st.markdown("""
     <style>
-    /* Latar belakang utama */
-    .stApp {
-        background-color: #0f172a;
-        color: #f8fafc;
-    }
-    [data-testid="stSidebar"] {
-        background-color: #1e1b4b;
-        border-right: 1px solid #312e81;
-    }
-    
-    /* Header & Judul */
-    h1, h2, h3 {
-        color: #38bdf8 !important;
+    /* Import Google Fonts - Inter & Fira Code */
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap');
+
+    html, body, [class*="st-"] {
         font-family: 'Inter', sans-serif;
     }
-    
-    /* Kartu & Container Form */
-    .stForm {
-        background-color: #1e293b;
-        padding: 24px;
-        border-radius: 12px;
-        border: 1px solid #334155;
+
+    /* Latar belakang utama dengan gradien halus */
+    .stApp {
+        background: linear-gradient(135deg, #090d16 0%, #0f172a 100%);
+        color: #f1f5f9;
+    }
+
+    /* Sidebar Styling */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #111827 0%, #0b0f19 100%);
+        border-right: 1px solid rgba(56, 189, 248, 0.15);
+        padding-top: 20px;
     }
     
-    /* Memperjelas Label Input */
-    .stTextInput label {
+    [data-testid="stSidebar"] hr {
+        border-color: rgba(56, 189, 248, 0.2);
+    }
+
+    /* Header & Judul Utama */
+    h1, h2, h3 {
+        color: #38bdf8 !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.025em;
+    }
+    
+    h1 {
+        font-size: 2.2rem !important;
+        background: linear-gradient(90deg, #38bdf8, #818cf8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Kotak Form Utama */
+    .stForm {
+        background: rgba(30, 41, 59, 0.7);
+        padding: 30px;
+        border-radius: 16px;
+        border: 1px solid rgba(56, 189, 248, 0.2);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(12px);
+    }
+
+    /* Label Input */
+    .stTextInput label, .stSelectbox label {
         color: #38bdf8 !important;
         font-weight: 600 !important;
-        font-size: 14px !important;
+        font-size: 0.9rem !important;
+        letter-spacing: 0.02em;
+    }
+
+    /* Kotak Input Teks & Selectbox */
+    .stTextInput input, .stSelectbox [data-baseweb="select"] {
+        background-color: #0f172a !important;
+        color: #f8fafc !important;
+        border: 1px solid #334155 !important;
+        border-radius: 8px !important;
     }
     
-    /* Perbaikan Tombol Utama: Latar Biru Terang & Teks Gelap Kontras */
+    .stTextInput input:focus, .stSelectbox [data-baseweb="select"]:focus-within {
+        border-color: #38bdf8 !important;
+        box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2) !important;
+    }
+
+    /* Tombol Utama (Jalankan Operasi / Masuk Sistem) */
     div.stButton > button, div.stFormSubmitButton > button {
-        background-color: #38bdf8 !important;
-        color: #0f172a !important;
-        padding: 6px 18px !important;
-        font-size: 14px !important;
-        border-radius: 6px !important;
-        border: none !important;
-        font-weight: 700 !important;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    }
-    div.stButton > button:hover, div.stFormSubmitButton > button:hover {
-        background-color: #7dd3fc !important;
-        color: #0f172a !important;
+        background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%) !important;
+        color: #ffffff !important;
+        padding: 10px 24px !important;
+        font-size: 0.95rem !important;
+        border-radius: 8px !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.025em;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        transition: all 0.3s ease;
     }
     
-    /* Tombol Download */
+    div.stButton > button:hover, div.stFormSubmitButton > button:hover {
+        background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%) !important;
+        box-shadow: 0 6px 16px rgba(56, 189, 248, 0.4);
+        transform: translateY(-1px);
+    }
+
+    /* Tombol Download Laporan */
     div.stDownloadButton > button {
-        background-color: #0d9488 !important;
+        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
         color: #ffffff !important;
-        padding: 4px 12px !important;
-        font-size: 12px !important;
-        border-radius: 6px !important;
+        padding: 6px 16px !important;
+        font-size: 0.85rem !important;
+        border-radius: 8px !important;
         border: none !important;
         font-weight: 600 !important;
+        box-shadow: 0 4px 10px rgba(13, 148, 136, 0.3);
     }
+    
     div.stDownloadButton > button:hover {
-        background-color: #0f766e !important;
+        background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%) !important;
+        transform: translateY(-1px);
+    }
+
+    /* Kartu Profil Sidebar & Kotak Hasil Laporan */
+    .report-container {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(56, 189, 248, 0.15);
+        padding: 24px;
+        border-radius: 12px;
+        margin-top: 20px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -92,15 +146,14 @@ if "history" not in st.session_state:
 
 # --- HALAMAN LOGIN ---
 if not st.session_state.logged_in:
-    col1, col2, col3 = st.columns([1, 1.2, 1])
+    col1, col2, col3 = st.columns([1, 1.3, 1])
     with col2:
         st.markdown("<br><br>", unsafe_allow_html=True)
-        st.markdown("## 🛡️ CyberIntel Secure Login")
-        st.caption("Masukkan email dan password Anda untuk masuk sistem.")
-        
-        # Tombol shortcut login demo instan
+        st.markdown("<div style='text-align: center;'><h1>🛡️ CyberIntel AI</h1><p style='color: #94a3b8; font-size: 1rem; margin-top: -10px;'>Secure Intelligence & Web Scraper System</p></div>", unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
-        st.info("💡 **Akses Cepat Demo:**")
+        
+        # Shortcut Demo Akses Cepat
+        st.info("💡 **Akses Cepat Demo:** Pilih akun di bawah untuk login instan:")
         dcol1, dcol2 = st.columns(2)
         with dcol1:
             if st.button("🔑 Login Admin"):
@@ -115,8 +168,7 @@ if not st.session_state.logged_in:
                 st.session_state.current_role = "Agent"
                 st.rerun()
                 
-        st.markdown("---")
-        st.markdown("<p style='text-align:center; color:#94a3b8; font-size:13px;'>Atau gunakan email pribadi Anda (bebas):</p>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align:center; color:#64748b; font-size:0.85rem; margin: 15px 0;'>Atau gunakan email pribadi Anda:</p>", unsafe_allow_html=True)
         
         with st.form("login_form"):
             username_input = st.text_input("Alamat Email", placeholder="contoh: sree.skyinsight@gmail.com")
@@ -125,14 +177,12 @@ if not st.session_state.logged_in:
             
             if login_btn:
                 if username_input.strip() != "":
-                    # Jika email belum ada di database, otomatis daftarkan sebagai Agent baru
                     if username_input not in st.session_state.users_db:
                         st.session_state.users_db[username_input] = {
                             "password": password_input if password_input else "123456",
                             "role": "Agent"
                         }
                     
-                    # Berhasil masuk
                     st.session_state.logged_in = True
                     st.session_state.current_user = username_input
                     st.session_state.current_role = st.session_state.users_db[username_input]["role"]
@@ -149,18 +199,24 @@ except Exception:
     api_key = None
 
 with st.sidebar:
-    st.markdown(f"👤 **Email:** `{st.session_state.current_user}`")
-    st.markdown(f"🏷️ **Role:** `{st.session_state.current_role}`")
+    st.markdown(f"### 🛡️ CyberIntel Agency")
+    st.markdown(f"""
+        <div style='background: rgba(30, 41, 59, 0.8); padding: 12px; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.2); margin-bottom: 20px;'>
+            <p style='margin: 0; font-size: 0.75rem; color: #94a3b8;'>TEROTORISASI SEBAGAI:</p>
+            <p style='margin: 4px 0 0 0; font-size: 0.9rem; font-weight: 600; color: #38bdf8; word-break: break-all;'>{st.session_state.current_user}</p>
+            <span style='display: inline-block; margin-top: 8px; background: #0284c7; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;'>{st.session_state.current_role}</span>
+        </div>
+    """, unsafe_allow_html=True)
     
-    if st.button("🚪 Logout"):
+    if st.button("🚪 Keluar Sistem"):
         st.session_state.logged_in = False
         st.rerun()
         
     st.divider()
-    st.header("⚙️ Konfigurasi")
+    st.markdown("### ⚙️ Konfigurasi Sistem")
     
     selected_model = st.selectbox(
-        "Pilih Model Agen:",
+        "Model Agen AI:",
         [
             "nousresearch/hermes-3-llama-3.1-70b", 
             "anthropic/claude-3.5-sonnet",
@@ -169,22 +225,22 @@ with st.sidebar:
     )
     
     st.divider()
-    st.subheader("📂 Arsip Kasus")
+    st.markdown("### 📂 Arsip Kasus")
     if len(st.session_state.history) == 0:
-        st.caption("Belum ada arsip investigasi.")
+        st.caption("Belum ada arsip investigasi tersimpan.")
     else:
         for i, item in enumerate(st.session_state.history):
-            if st.button(f"📁 {item['target'][:20]}...", key=f"hist_{i}"):
+            if st.button(f"📁 {item['target'][:22]}...", key=f"hist_{i}"):
                 st.session_state.active_report = item['result']
                 st.session_state.active_target = item['target']
 
     if st.session_state.current_role == "Administrator":
         st.divider()
-        st.subheader("🛠️ Admin Panel: Database User")
+        st.markdown("### 🛠️ Admin Panel")
         with st.expander("Kelola Pengguna"):
-            st.write("Daftar Email Agen Terdaftar:")
+            st.write("Database Agen Aktif:")
             for u, data in st.session_state.users_db.items():
-                st.text(f"- {u} ({data['role']})")
+                st.text(f"• {u} ({data['role']})")
             
             new_user = st.text_input("Email Baru", placeholder="nama@domain.com")
             new_pass = st.text_input("Password Baru", type="password")
@@ -194,18 +250,19 @@ with st.sidebar:
                         "password": new_pass, 
                         "role": "Agent"
                     }
-                    st.success(f"Agen {new_user} berhasil ditambahkan!")
+                    st.success(f"Agen {new_user} ditambahkan!")
                     st.rerun()
                 else:
-                    st.warning("Isi lengkap email & password.")
+                    st.warning("Lengkapi data form.")
 
-st.title("🕵️‍♂️ CyberIntel AI: Web Intelligence & Scraper")
-st.markdown("Sistem investigasi berbasis AI cerdas untuk ekstraksi data web, riset kompetitor, dan analisis mendalam.")
+# Tampilan Konten Utama
+st.markdown("<h1>🕵️‍♂️ CyberIntel AI: Web Intelligence</h1>", unsafe_allow_html=True)
+st.markdown("<p style='color: #94a3b8; font-size: 1.05rem; margin-top: -10px; margin-bottom: 25px;'>Sistem investigasi berbasis AI cerdas untuk ekstraksi data web, riset kompetitor, dan analisis intelijen mendalam.</p>", unsafe_allow_html=True)
 
 with st.form("scraper_form"):
     target_query = st.text_input(
         "Target Investigasi / Topik Web:",
-        placeholder="Contoh: Analisis tren harga produk digital terlaris"
+        placeholder="Contoh: Analisis tren perilaku konsumen digital terbaru"
     )
     
     task_type = st.selectbox(
@@ -213,7 +270,7 @@ with st.form("scraper_form"):
         ["Rangkuman Intelijen Berita", "Ekstraksi Data & Profiling Kompetitor", "Analisis Dokumen Mendalam"]
     )
     
-    submitted = st.form_submit_button("🔍 Jalankan Operasi")
+    submitted = st.form_submit_button("🔍 Jalankan Operasi Intelijen")
 
 if submitted:
     if not api_key:
@@ -259,16 +316,19 @@ if submitted:
                 st.error(f"Gagal terhubung ke jaringan AI: {e}")
 
 if "active_report" in st.session_state:
-    st.divider()
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown('<div class="report-container">', unsafe_allow_html=True)
     col1, col2 = st.columns([3, 1])
     with col1:
         st.markdown(f"### 🗂️ Berkas Laporan: *{st.session_state.get('active_target', '')}*")
     with col2:
         st.download_button(
-            label="📥 Unduh Laporan",
+            label="📥 Unduh Laporan (.md)",
             data=st.session_state.active_report,
             file_name=f"laporan_cyberintel_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.md",
             mime="text/markdown"
         )
     
+    st.divider()
     st.markdown(st.session_state.active_report)
+    st.markdown('</div>', unsafe_allow_html=True)

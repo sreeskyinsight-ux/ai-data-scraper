@@ -9,7 +9,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Kustomisasi CSS Profesional & Elegan (Termasuk perbaikan label teks input & tombol)
+# Kustomisasi CSS Profesional & Elegan
 st.markdown("""
     <style>
     /* Latar belakang utama */
@@ -36,7 +36,7 @@ st.markdown("""
         border: 1px solid #334155;
     }
     
-    /* Memperjelas Label Input (Username & Password) */
+    /* Memperjelas Label Input */
     .stTextInput label {
         color: #38bdf8 !important;
         font-weight: 600 !important;
@@ -75,11 +75,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 1. Inisialisasi Database Pengguna di Session State
+# 1. Inisialisasi Database Pengguna di Session State (Menggunakan email sebagai username)
 if "users_db" not in st.session_state:
     st.session_state.users_db = {
-        "admin": {"password": "adminpassword123", "role": "Administrator", "joined": "2026-06-01"},
-        "detektif1": {"password": "password123", "role": "Agent", "joined": "2026-06-05"}
+        "admin@cyberintel.id": {"password": "adminpassword123", "role": "Administrator", "joined": "2026-06-01"},
+        "agent@cyberintel.id": {"password": "password123", "role": "Agent", "joined": "2026-06-05"}
     }
 
 if "logged_in" not in st.session_state:
@@ -90,12 +90,6 @@ if "logged_in" not in st.session_state:
 if "history" not in st.session_state:
     st.session_state.history = []
 
-# Inisialisasi state untuk auto-fill demo jika belum ada
-if "input_user" not in st.session_state:
-    st.session_state.input_user = ""
-if "input_pass" not in st.session_state:
-    st.session_state.input_pass = ""
-
 # --- HALAMAN LOGIN ---
 if not st.session_state.logged_in:
     col1, col2, col3 = st.columns([1, 1.2, 1])
@@ -104,9 +98,30 @@ if not st.session_state.logged_in:
         st.markdown("## 🛡️ CyberIntel Secure Login")
         st.caption("Masukkan kredensial otorisasi agen Anda.")
         
+        # Tombol shortcut login instan menggunakan email
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.info("💡 **Tips Cepat:** Pilih akun demo di bawah untuk login instan:")
+        
+        dcol1, dcol2 = st.columns(2)
+        with dcol1:
+            if st.button("🔑 Login Admin"):
+                st.session_state.logged_in = True
+                st.session_state.current_user = "admin@cyberintel.id"
+                st.session_state.current_role = "Administrator"
+                st.rerun()
+        with dcol2:
+            if st.button("🔑 Login Agent"):
+                st.session_state.logged_in = True
+                st.session_state.current_user = "agent@cyberintel.id"
+                st.session_state.current_role = "Agent"
+                st.rerun()
+                
+        st.markdown("---")
+        st.markdown("<p style='text-align:center; color:#94a3b8; font-size:13px;'>Atau login manual menggunakan email terdaftar:</p>", unsafe_allow_html=True)
+        
         with st.form("login_form"):
-            username_input = st.text_input("Username", value=st.session_state.input_user)
-            password_input = st.text_input("Password", type="password", value=st.session_state.input_pass)
+            username_input = st.text_input("Alamat Email", placeholder="contoh: agent@cyberintel.id")
+            password_input = st.text_input("Password", type="password", placeholder="••••••••••••")
             login_btn = st.form_submit_button("Masuk Sistem")
             
             if login_btn:
@@ -117,23 +132,7 @@ if not st.session_state.logged_in:
                     st.success("Otorisasi Berhasil! Memuat sistem...")
                     st.rerun()
                 else:
-                    st.error("Username atau Password salah!")
-        
-        # Tombol Bantuan / Shortcut Kredensial Demo di bawah form
-        st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("⚡ **Shortcut Akses Cepat (Demo):**")
-        bcol1, bcol2 = st.columns(2)
-        with bcol1:
-            if st.button("🔑 Isi Akun Admin"):
-                st.session_state.input_user = "admin"
-                st.session_state.input_pass = "adminpassword123"
-                st.rerun()
-        with bcol2:
-            if st.button("🔑 Isi Akun Agent"):
-                st.session_state.input_user = "detektif1"
-                st.session_state.input_pass = "password123"
-                st.rerun()
-                
+                    st.error("Alamat Email atau Password salah!")
         st.stop()
 
 # --- HALAMAN UTAMA SETELAH LOGIN ---
@@ -143,7 +142,7 @@ except Exception:
     api_key = None
 
 with st.sidebar:
-    st.markdown(f"👤 **Agent:** `{st.session_state.current_user}`")
+    st.markdown(f"👤 **Email:** `{st.session_state.current_user}`")
     st.markdown(f"🏷️ **Role:** `{st.session_state.current_role}`")
     
     if st.button("🚪 Logout"):
@@ -176,11 +175,11 @@ with st.sidebar:
         st.divider()
         st.subheader("🛠️ Admin Panel: Database User")
         with st.expander("Kelola Pengguna"):
-            st.write("Daftar Agen Terdaftar:")
+            st.write("Daftar Email Agen Terdaftar:")
             for u, data in st.session_state.users_db.items():
                 st.text(f"- {u} ({data['role']})")
             
-            new_user = st.text_input("Username Baru")
+            new_user = st.text_input("Email Baru", placeholder="nama@domain.com")
             new_pass = st.text_input("Password Baru", type="password")
             if st.button("Tambah Agen Baru"):
                 if new_user and new_pass:
@@ -192,7 +191,7 @@ with st.sidebar:
                     st.success(f"Agen {new_user} berhasil ditambahkan!")
                     st.rerun()
                 else:
-                    st.warning("Isi lengkap username & password.")
+                    st.warning("Isi lengkap email & password.")
 
 st.title("🕵️‍♂️ CyberIntel AI: Web Intelligence & Scraper")
 st.markdown("Sistem investigasi berbasis AI cerdas untuk ekstraksi data web, riset kompetitor, dan analisis mendalam.")

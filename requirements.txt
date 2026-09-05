@@ -1,2 +1,2 @@
-streamlit
-openai
+crewai>=0.50.0  # Anda bisa menentukan versi spesifik atau membiarkannya tanpa versi
+langchain-openai

@@ -1,6 +1,7 @@
 import streamlit as st
 from openai import OpenAI
 import datetime
+import urllib.parse
 
 # Konfigurasi Halaman
 st.set_page_config(
@@ -259,24 +260,9 @@ if submitted:
         st.warning("⚠️ Mohon masukkan target investigasi atau deskripsi gambar terlebih dahulu.")
     else:
         if task_type == "🎨 Pembuat Gambar AI (Visual Generator)":
-            with st.spinner("🎨 Agen sedang merender gambar visual via OpenRouter..."):
+            with st.spinner("🎨 Agen sedang merender gambar visual berdasarkan deskripsi..."):
                 try:
-                    # Menggunakan endpoint OpenRouter dengan model Flux atau Stable Diffusion
-                    client_img = OpenAI(
-                        base_url="https://openrouter.ai/api/v1",
-                        api_key=api_key,
-                    )
-                    
-                    response_img = client_img.chat.completions.create(
-                        model="black-forest-labs/flux-schnell",
-                        messages=[
-                            {"role": "user", "content": target_query}
-                        ]
-                    )
-                    
-                    # Mengambil deskripsi/link hasil atau menggunakan layanan gambar gratis via markdown placeholder
-                    # Sebagai alternatif stabil di OpenRouter, kita gunakan teknik render link gambar publik dari Pollinations AI / Unsplash berdasarkan prompt
-                    import urllib.parse
+                    # Menggunakan layanan pembuatan gambar berbasis AI publik yang stabil via URL encoding
                     encoded_prompt = urllib.parse.quote(target_query)
                     image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1024&height=1024&nologo=true"
                     

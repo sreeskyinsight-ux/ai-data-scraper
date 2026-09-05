@@ -9,10 +9,8 @@ st.set_page_config(
     layout="wide"
 )
 
-# Kustomisasi CSS Profesional & Elegan (Memperbaiki Warna Tombol & Kontras)
+# Kustomisasi CSS Profesional & Elegan
 st.markdown("""
-    <style>
-  st.markdown("""
     <style>
     /* Latar belakang utama */
     .stApp {

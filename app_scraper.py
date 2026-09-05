@@ -112,16 +112,6 @@ st.markdown("""
         margin-top: 2rem;
         box-shadow: 0 15px 30px -10px rgba(0,0,0,0.5);
     }
-    
-    .agent-log {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.85rem;
-        color: #94a3b8;
-        background: rgba(30, 41, 59, 0.4);
-        padding: 10px;
-        border-radius: 8px;
-        margin-bottom: 10px;
-    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -131,12 +121,10 @@ try:
 except Exception:
     api_key = None
 
-# Inisialisasi Database Pengguna di Session State
 if "users_db" not in st.session_state:
     st.session_state.users_db = {
         "admin@cyberintel.id": {"password": "adminpassword123", "role": "Administrator"},
-        "agent@cyberintel.id": {"password": "password123", "role": "Agent"},
-        "analis@cyberintel.id": {"password": "secret", "role": "Agent"}
+        "agent@cyberintel.id": {"password": "password123", "role": "Agent"}
     }
 
 if "logged_in" not in st.session_state:
@@ -147,7 +135,6 @@ if "logged_in" not in st.session_state:
 if "history" not in st.session_state:
     st.session_state.history = []
 
-# Konfigurasi Model LangChain/CrewAI (Opsional: Bisa disesuaikan per agen)
 def get_llm(model_name="nousresearch/hermes-3-llama-3.1-70b"):
     if not api_key:
         st.error("OpenRouter API Key belum diset di secrets.")
@@ -160,38 +147,28 @@ def get_llm(model_name="nousresearch/hermes-3-llama-3.1-70b"):
 
 # --- A. FUNGSI PEMBUAT GAMBAR MANDIRI ---
 def run_visual_generator(prompt_text):
-    with st.spinner("🎨 Agen Artistik sedang merender visualisasi berdasarkan deskripsi..."):
-        try:
-            # Menggunakan layanan pembuatan gambar berbasis AI publik yang stabil via URL encoding
-            encoded_prompt = urllib.parse.quote(prompt_text)
-            image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1024&height=1024&nologo=true&seed=123"
-            return image_url
-        except Exception as e:
-            st.error(f"Gagal menghasilkan gambar: {e}")
-            return None
+    encoded_prompt = urllib.parse.quote(prompt_text)
+    image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1024&height=1024&nologo=true&seed=123"
+    return image_url
 
 # --- B. FUNGSI SISTEM MULTI-AGENT CREWAI ---
 def run_agentic_research(topic):
-    
-    # 1. Tentukan Model untuk Agen
-    llm_fast = get_llm("nousresearch/hermes-3-llama-3.1-70b") # Untuk kapten & peneliti cepat
-    llm_writer = get_llm("anthropic/claude-3.5-sonnet") # Untuk penulis laporan yang lebih halus
+    llm_fast = get_llm("nousresearch/hermes-3-llama-3.1-70b")
+    llm_writer = get_llm("anthropic/claude-3.5-sonnet")
 
-    # 2. Definisikan Agen-Agen
     agent_researcher = Agent(
         role='Senior Data Analyst & Researcher',
         goal='Mengumpulkan data mendalam, tren terkini, dan fakta kunci terkait topik: {topic}',
-        backstory="""Seorang analis data jenius dengan kemampuan riset web tingkat lanjut. Dikenal karena ketelitiannya dalam menyajikan data yang valid dan relevan.""",
+        backstory="Analis data jenius dengan kemampuan riset mendalam.",
         verbose=True,
         allow_delegation=False,
-        llm=llm_fast,
-        # tools=[SerperDevTool()] # Opsional: Tambahkan tool pencarian nyata di sini jika punya keynya
+        llm=llm_fast
     )
 
     agent_reporter = Agent(
         role='Senior Intelligence Reporter',
-        goal='Menyusun data mentah dari Researcher menjadi laporan intelijen formal, tajam, dan terstruktur rapi berformat Markdown.',
-        backstory="""Mantan jurnalis investigasi yang kini bekerja untuk agensi intelijen. Spesialis dalam menyusun narasi yang kuat dan berdampak dari data yang ada.""",
+        goal='Menyusun data dari Researcher menjadi laporan intelijen formal dan terstruktur rapi berformat Markdown.',
+        backstory="Mantan jurnalis investigasi spesialis penyusun laporan strategis.",
         verbose=True,
         allow_delegation=False,
         llm=llm_writer
@@ -199,65 +176,49 @@ def run_agentic_research(topic):
 
     agent_artist = Agent(
         role='Creative Visual Strategist',
-        goal='Menganalisis laporan yang dihasilkan dan membuatkan satu prompt deskriptif yang sangat detail, artistik, dan relevan untuk merender gambar ilustrasi konseptual yang menarik.',
-        backstory="""Seorang direktur seni visioner yang mampu menerjemahkan data kompleks menjadi konsep visual yang estetis dan futuristik.""",
+        goal='Membuat prompt deskriptif bahasa Inggris yang detail untuk merender gambar ilustrasi konseptual.',
+        backstory="Direktur seni visioner penerjemah data ke konsep visual.",
         verbose=True,
         allow_delegation=False,
-        llm=llm_fast # Menggunakan model yang cepat untuk membuat prompt gambar
+        llm=llm_fast
     )
 
-    # 3. Definisikan Tugas-Tugas
     task_gather = Task(
-        description=f'Lakukan riset mendalam tentang "{topic}". Kumpulkan poin-poin data utama, tren pasar, dan konteks strategis.',
-        expected_output='Ringkasan poin-poin data (bullet points) yang terstruktur, mencakup setidaknya 5 fakta penting.',
+        description=f'Lakukan riset mendalam tentang "{topic}". Kumpulkan poin-poin data utama.',
+        expected_output='Ringkasan poin-poin data terstruktur.',
         agent=agent_researcher
     )
 
     task_report = Task(
-        description=f'Berdasarkan data dari Researcher, susun laporan intelijen formal setidaknya 300 kata tentang "{topic}". Laporan harus memiliki judul, pendahuluan, analisis inti, dan kesimpulan.',
+        description=f'Susun laporan intelijen formal minimal 300 kata tentang "{topic}".',
         expected_output='Laporan intelijen lengkap dalam format Markdown.',
         agent=agent_reporter,
         context=[task_gather]
     )
 
     task_visual = Task(
-        description=f'Baca laporan yang disusun oleh Intelligence Reporter tentang "{topic}". Buatlah prompt teks bahasa Inggris yang sangat deskriptif (misal: gaya fotografi, pencahayaan, komposisi) untuk menghasilkan gambar ilustrasi konseptual yang mewakili esensi laporan tersebut.',
-        expected_output='Satu kalimat panjang deskriptif yang kaya detail untuk digunakan sebagai prompt generator gambar AI.',
+        description=f'Buat prompt teks deskriptif untuk ilustrasi visual berdasarkan laporan tentang "{topic}".',
+        expected_output='Satu kalimat prompt deskriptif.',
         agent=agent_artist,
         context=[task_report]
     )
 
-    # 4. Bentuk Tim Crew & Jalankan
     crew = Crew(
         agents=[agent_researcher, agent_reporter, agent_artist],
         tasks=[task_gather, task_report, task_visual],
-        process=Process.sequential, # Jalankan berurutan
+        process=Process.sequential,
         verbose=True,
-        manager_llm=llm_fast # Hermes sebagai manajer tim
+        manager_llm=llm_fast
     )
 
-    # 5. Eksekusi & Tangkap Log Output
-    with st.spinner(f"🤖 Multi-Agent CrewAI sedang bekerja secara otonom pada topik: {topic}..."):
+    with st.spinner(f"🤖 Tim Multi-Agent CrewAI sedang bekerja secara otonom pada topik: {topic}..."):
         try:
-            # Tampilkan log progress secara langsung di Streamlit
-            progress_bar = st.progress(0)
-            status_text = st.empty()
-            status_text.text("Memulai investigasi multi-agen...")
-            
-            # CrewAI menjalankan tugas secara berurutan
-            result = crew.kickoff()
-            
-            progress_bar.progress(100)
-            status_text.text("Investigasi multi-agen selesai.")
-            
-            # Mengambil hasil akhir dari setiap task
+            crew.kickoff()
             final_report = task_report.output.raw
             visual_prompt = task_visual.output.raw
-            
             return final_report, visual_prompt
-            
         except Exception as e:
-            st.error(f"Terjadi kesalahan selama eksekusi CrewAI: {e}")
+            st.error(f"Terjadi kesalahan CrewAI: {e}")
             return None, None
 
 # --- HALAMAN LOGIN ---
@@ -288,4 +249,163 @@ if not st.session_state.logged_in:
                 st.session_state.current_role = "Agent"
                 st.rerun()
                 
-        st.markdown("<p style='text-align:center; color:#64748b; font
+        st.markdown("<p style='text-align:center; color:#64748b; font-size:0.85rem; margin: 20px 0 10px 0;'>Atau gunakan email pribadi:</p>", unsafe_allow_html=True)
+        
+        with st.form("login_form"):
+            username_input = st.text_input("Alamat Email", placeholder="contoh: sree@cyberintel.id")
+            password_input = st.text_input("Password", type="password", placeholder="Masukkan password")
+            login_btn = st.form_submit_button("Masuk Sistem")
+            
+            if login_btn:
+                if username_input.strip() != "":
+                    if username_input not in st.session_state.users_db:
+                        st.session_state.users_db[username_input] = {"password": "123", "role": "Agent"}
+                    st.session_state.logged_in = True
+                    st.session_state.current_user = username_input
+                    st.session_state.current_role = st.session_state.users_db[username_input]["role"]
+                    st.rerun()
+                else:
+                    st.error("Email tidak boleh kosong!")
+        st.stop()
+
+# --- HALAMAN UTAMA DASHBOARD SAAS ---
+with st.sidebar:
+    st.markdown("### 🛡️ CyberIntel Agency")
+    st.markdown(f"""
+        <div style='background: rgba(30, 41, 59, 0.6); padding: 14px; border-radius: 12px; border: 1px solid rgba(56, 189, 248, 0.2); margin: 15px 0;'>
+            <p style='margin: 0; font-size: 0.7rem; color: #94a3b8; font-weight: 700;'>AGEN TEROTORISASI:</p>
+            <p style='margin: 6px 0 0 0; font-size: 0.85rem; font-weight: 600; color: #38bdf8; word-break: break-all;'>{st.session_state.current_user}</p>
+            <div style='margin-top: 8px;'>
+                <span style='background: #0284c7; color: #fff; padding: 2px 8px; border-radius: 6px; font-size: 0.65rem; font-weight: 700;'>{st.session_state.current_role}</span>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    if st.button("🚪 Keluar Sistem"):
+        st.session_state.logged_in = False
+        st.rerun()
+        
+    st.divider()
+    st.markdown("### 📂 Arsip Investigasi")
+    if len(st.session_state.history) == 0:
+        st.caption("Belum ada arsip tersimpan.")
+    else:
+        for i, item in enumerate(st.session_state.history):
+            item_type = item.get('type', 'text')
+            icon = "🤖" if item_type == "agentic" else ("🎨" if item_type == "image" else "📁")
+            if st.button(f"{icon} {item['target'][:18]}...", key=f"hist_{i}"):
+                st.session_state.active_result = item['result']
+                st.session_state.active_target = item['target']
+                st.session_state.active_type = item_type
+                if item_type == "agentic":
+                    st.session_state.active_image = item.get('image', None)
+
+st.markdown("<h1>🕵️‍♂️ CyberIntel SaaS: Multi-Agent Hub</h1>", unsafe_allow_html=True)
+st.markdown("<p style='color: #94a3b8; font-size: 1.05rem; margin-bottom: 30px;'>Platform Enterprise Intelligence otonom berbasis kolaborasi multi-agen AI (CrewAI & Hermes).</p>", unsafe_allow_html=True)
+
+with st.form("scraper_form"):
+    target_query = st.text_input(
+        "Target Investigasi / Topik Utama:",
+        placeholder="Contoh: Analisis Tren Keamanan Siber Global 2026"
+    )
+    
+    task_type = st.selectbox(
+        "Protokol Operasi:",
+        [
+            "🤖 CrewAI Multi-Agent Autonomous Mission (Riset + Laporan + Visual)",
+            "🎨 Pembuat Gambar AI Mandiri (Visual Generator)",
+            "📁 Rangkuman Intelijen Standar (Single LLM)"
+        ]
+    )
+    
+    submitted = st.form_submit_button("🚀 Jalankan Operasi")
+
+if submitted:
+    if not api_key:
+        st.warning("⚠️ Kesalahan Sistem: OpenRouter API Key belum dikonfigurasi.")
+    elif not target_query:
+        st.warning("⚠️ Mohon masukkan target investigasi terlebih dahulu.")
+    else:
+        if "CrewAI Multi-Agent" in task_type:
+            report, v_prompt = run_agentic_research(target_query)
+            if report:
+                img_url = run_visual_generator(v_prompt)
+                
+                st.session_state.history.insert(0, {
+                    "target": target_query,
+                    "result": report,
+                    "image": img_url,
+                    "type": "agentic",
+                    "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                })
+                
+                st.session_state.active_result = report
+                st.session_state.active_target = target_query
+                st.session_state.active_type = "agentic"
+                st.session_state.active_image = img_url
+                
+        elif "Pembuat Gambar AI" in task_type:
+            img_url = run_visual_generator(target_query)
+            if img_url:
+                st.session_state.history.insert(0, {
+                    "target": target_query,
+                    "result": img_url,
+                    "type": "image",
+                    "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                })
+                st.session_state.active_result = img_url
+                st.session_state.active_target = target_query
+                st.session_state.active_type = "image"
+        else:
+            with st.spinner("🛡️ Menjalankan intelijen standar..."):
+                client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=api_key)
+                response = client.chat.completions.create(
+                    model="nousresearch/hermes-3-llama-3.1-70b",
+                    messages=[
+                        {"role": "system", "content": "Kamu adalah agen intelijen data profesional."},
+                        {"role": "user", "content": f"Buatkan laporan intelijen mendalam tentang: {target_query}"}
+                    ]
+                )
+                hasil_ai = response.choices[0].message.content
+                st.session_state.history.insert(0, {
+                    "target": target_query,
+                    "result": hasil_ai,
+                    "type": "text",
+                    "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                })
+                st.session_state.active_result = hasil_ai
+                st.session_state.active_target = target_query
+                st.session_state.active_type = "text"
+
+if "active_result" in st.session_state:
+    st.markdown('<div class="report-card">', unsafe_allow_html=True)
+    curr_type = st.session_state.get("active_type", "text")
+    
+    if curr_type == "agentic":
+        st.markdown(f"### 🤖 Berkas Misi Multi-Agent: *{st.session_state.get('active_target', '')}*")
+        st.divider()
+        if st.session_state.get("active_image"):
+            st.image(st.session_state.active_image, caption="Ilustrasi Visual Konseptual oleh Agen Artistik", use_container_width=True)
+            st.divider()
+        st.markdown(st.session_state.active_result)
+        
+    elif curr_type == "image":
+        st.markdown(f"### 🎨 Hasil Render Visual: *{st.session_state.get('active_target', '')}*")
+        st.divider()
+        st.image(st.session_state.active_result, caption=st.session_state.get('active_target', ''), use_container_width=True)
+        
+    else:
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            st.markdown(f"### 🗂️ Berkas Laporan: *{st.session_state.get('active_target', '')}*")
+        with col2:
+            st.download_button(
+                label="📥 Unduh Laporan (.md)",
+                data=st.session_state.active_result,
+                file_name=f"laporan_cyberintel_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.md",
+                mime="text/markdown"
+            )
+        st.divider()
+        st.markdown(st.session_state.active_result)
+        
+    st.markdown('</div>', unsafe_allow_html=True)

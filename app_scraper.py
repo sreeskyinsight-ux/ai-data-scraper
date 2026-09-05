@@ -16,13 +16,13 @@ st.markdown("Pekerjakan agen AI untuk mencari, mengambil, dan merangkum data dar
 with st.sidebar:
     st.header("⚙️ Pengaturan Agen")
     
-    # Mengambil API key secara otomatis dari secrets.toml
+    # Mengambil API key secara aman dari Streamlit Secrets
     try:
         api_key = st.secrets["OPENROUTER_API_KEY"]
         st.success("✅ API Key Berhasil Dimuat Aman")
     except Exception:
         api_key = None
-        st.error("❌ API Key belum diatur di secrets.toml!")
+        st.error("❌ API Key belum diatur di Streamlit Secrets!")
     
     # Pilihan Model AI (Termasuk Hermes)
     selected_model = st.selectbox(
@@ -56,7 +56,7 @@ with st.form("scraper_form"):
 
 if submitted:
     if not api_key:
-        st.warning("⚠️ Mohon atur OpenRouter API Key terlebih dahulu di dalam file `secrets.toml`.")
+        st.warning("⚠️ Mohon atur OpenRouter API Key terlebih dahulu di menu Secrets Streamlit Cloud.")
     elif not target_query:
         st.warning("⚠️ Mohon masukkan topik atau target pencarian.")
     else:

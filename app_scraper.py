@@ -4,127 +4,139 @@ import datetime
 
 # Konfigurasi Halaman
 st.set_page_config(
-    page_title="CyberIntel AI - Intelligence Agency",
+    page_title="CyberIntel AI - Enterprise Intelligence",
     page_icon="🛡️",
     layout="wide"
 )
 
-# Kustomisasi CSS Tingkat Lanjut (Modern Dark Cyber-Enterprise Theme)
+# Kustomisasi CSS Tingkat Lanjut (Ultimate SaaS Dark Theme)
 st.markdown("""
     <style>
-    /* Import Google Fonts - Inter & Fira Code */
-    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
+    /* Global Typography & Background */
     html, body, [class*="st-"] {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
     }
-
-    /* Latar belakang utama dengan gradien halus */
+    
     .stApp {
-        background: linear-gradient(135deg, #090d16 0%, #0f172a 100%);
-        color: #f1f5f9;
+        background: #030712 !important;
+        color: #f3f4f6 !important;
     }
 
-    /* Sidebar Styling */
+    /* Sidebar Styling Premium */
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #111827 0%, #0b0f19 100%);
-        border-right: 1px solid rgba(56, 189, 248, 0.15);
-        padding-top: 20px;
+        background: #0b0f19 !important;
+        border-right: 1px solid rgba(56, 189, 248, 0.1) !important;
+        padding-top: 1.5rem !important;
     }
     
     [data-testid="stSidebar"] hr {
-        border-color: rgba(56, 189, 248, 0.2);
+        border-color: rgba(56, 189, 248, 0.15) !important;
     }
 
     /* Header & Judul Utama */
     h1, h2, h3 {
         color: #38bdf8 !important;
-        font-weight: 700 !important;
-        letter-spacing: -0.025em;
+        font-weight: 800 !important;
+        letter-spacing: -0.03em !important;
     }
     
     h1 {
-        font-size: 2.2rem !important;
-        background: linear-gradient(90deg, #38bdf8, #818cf8);
+        font-size: 2.4rem !important;
+        background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        margin-bottom: 0.2rem !important;
     }
 
-    /* Kotak Form Utama */
+    /* Card Box Utama / Form Container */
     .stForm {
-        background: rgba(30, 41, 59, 0.7);
-        padding: 30px;
-        border-radius: 16px;
-        border: 1px solid rgba(56, 189, 248, 0.2);
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
-        backdrop-filter: blur(12px);
+        background: rgba(15, 23, 42, 0.75) !important;
+        padding: 32px !important;
+        border-radius: 20px !important;
+        border: 1px solid rgba(56, 189, 248, 0.25) !important;
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 30px rgba(56, 189, 248, 0.05) !important;
+        backdrop-filter: blur(16px) !important;
     }
 
-    /* Label Input */
+    /* Label Input Form yang Jelas & Terang */
     .stTextInput label, .stSelectbox label {
         color: #38bdf8 !important;
-        font-weight: 600 !important;
-        font-size: 0.9rem !important;
-        letter-spacing: 0.02em;
+        font-weight: 700 !important;
+        font-size: 0.95rem !important;
+        margin-bottom: 6px !important;
     }
 
     /* Kotak Input Teks & Selectbox */
     .stTextInput input, .stSelectbox [data-baseweb="select"] {
-        background-color: #0f172a !important;
-        color: #f8fafc !important;
+        background-color: #030712 !important;
+        color: #ffffff !important;
         border: 1px solid #334155 !important;
-        border-radius: 8px !important;
+        border-radius: 10px !important;
+        padding: 10px 14px !important;
+        font-size: 1rem !important;
     }
     
     .stTextInput input:focus, .stSelectbox [data-baseweb="select"]:focus-within {
         border-color: #38bdf8 !important;
-        box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2) !important;
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
     }
 
-    /* Tombol Utama (Jalankan Operasi / Masuk Sistem) */
+    /* Tombol Eksekusi / Submit Utama */
     div.stButton > button, div.stFormSubmitButton > button {
-        background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%) !important;
+        background: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%) !important;
         color: #ffffff !important;
-        padding: 10px 24px !important;
-        font-size: 0.95rem !important;
-        border-radius: 8px !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        font-weight: 600 !important;
-        letter-spacing: 0.025em;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-        transition: all 0.3s ease;
+        padding: 12px 24px !important;
+        font-size: 1rem !important;
+        border-radius: 10px !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.03em !important;
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4) !important;
+        transition: all 0.2s ease-in-out !important;
+        width: 100% !important;
     }
     
     div.stButton > button:hover, div.stFormSubmitButton > button:hover {
-        background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%) !important;
-        box-shadow: 0 6px 16px rgba(56, 189, 248, 0.4);
-        transform: translateY(-1px);
+        background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%) !important;
+        box-shadow: 0 10px 25px rgba(56, 189, 248, 0.5) !important;
+        transform: translateY(-2px) !important;
     }
 
     /* Tombol Download Laporan */
     div.stDownloadButton > button {
-        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
+        background: linear-gradient(135deg, #059669 0%, #0d9488 100%) !important;
         color: #ffffff !important;
-        padding: 6px 16px !important;
-        font-size: 0.85rem !important;
+        padding: 8px 18px !important;
+        font-size: 0.9rem !important;
         border-radius: 8px !important;
         border: none !important;
         font-weight: 600 !important;
-        box-shadow: 0 4px 10px rgba(13, 148, 136, 0.3);
+        box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3) !important;
     }
     
     div.stDownloadButton > button:hover {
-        background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%) !important;
-        transform: translateY(-1px);
+        background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%) !important;
     }
 
-    /* Kartu Profil Sidebar & Kotak Hasil Laporan */
-    .report-container {
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid rgba(56, 189, 248, 0.15);
-        padding: 24px;
-        border-radius: 12px;
-        margin-top: 20px;
+    /* Kartu Kontainer Hasil Laporan */
+    .report-card {
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid rgba(56, 189, 248, 0.2);
+        padding: 32px;
+        border-radius: 16px;
+        margin-top: 2rem;
+        box-shadow: 0 15px 30px -10px rgba(0,0,0,0.5);
+    }
+    
+    /* Login Card Container Center */
+    .login-card {
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid rgba(56, 189, 248, 0.25);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
     }
     </style>
 """, unsafe_allow_html=True)
@@ -146,14 +158,19 @@ if "history" not in st.session_state:
 
 # --- HALAMAN LOGIN ---
 if not st.session_state.logged_in:
-    col1, col2, col3 = st.columns([1, 1.3, 1])
+    col1, col2, col3 = st.columns([1, 1.4, 1])
     with col2:
-        st.markdown("<br><br>", unsafe_allow_html=True)
-        st.markdown("<div style='text-align: center;'><h1>🛡️ CyberIntel AI</h1><p style='color: #94a3b8; font-size: 1rem; margin-top: -10px;'>Secure Intelligence & Web Scraper System</p></div>", unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("""
+            <div style='text-align: center; margin-bottom: 2rem;'>
+                <div style='font-size: 3rem; margin-bottom: 0.5rem;'>🛡️</div>
+                <h1 style='font-size: 2.2rem !important;'>CyberIntel AI</h1>
+                <p style='color: #94a3b8; font-size: 0.95rem;'>Enterprise Intelligence & Web Scraper System</p>
+            </div>
+        """, unsafe_allow_html=True)
         
-        # Shortcut Demo Akses Cepat
-        st.info("💡 **Akses Cepat Demo:** Pilih akun di bawah untuk login instan:")
+        # Shortcut Demo Cepat
+        st.info("⚡ **Akses Cepat Demo (Instan):**")
         dcol1, dcol2 = st.columns(2)
         with dcol1:
             if st.button("🔑 Login Admin"):
@@ -168,7 +185,7 @@ if not st.session_state.logged_in:
                 st.session_state.current_role = "Agent"
                 st.rerun()
                 
-        st.markdown("<p style='text-align:center; color:#64748b; font-size:0.85rem; margin: 15px 0;'>Atau gunakan email pribadi Anda:</p>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align:center; color:#64748b; font-size:0.85rem; margin: 20px 0 10px 0;'>Atau gunakan email pribadi Anda:</p>", unsafe_allow_html=True)
         
         with st.form("login_form"):
             username_input = st.text_input("Alamat Email", placeholder="contoh: sree.skyinsight@gmail.com")
@@ -199,12 +216,14 @@ except Exception:
     api_key = None
 
 with st.sidebar:
-    st.markdown(f"### 🛡️ CyberIntel Agency")
+    st.markdown("### 🛡️ CyberIntel Agency")
     st.markdown(f"""
-        <div style='background: rgba(30, 41, 59, 0.8); padding: 12px; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.2); margin-bottom: 20px;'>
-            <p style='margin: 0; font-size: 0.75rem; color: #94a3b8;'>TEROTORISASI SEBAGAI:</p>
-            <p style='margin: 4px 0 0 0; font-size: 0.9rem; font-weight: 600; color: #38bdf8; word-break: break-all;'>{st.session_state.current_user}</p>
-            <span style='display: inline-block; margin-top: 8px; background: #0284c7; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;'>{st.session_state.current_role}</span>
+        <div style='background: rgba(30, 41, 59, 0.6); padding: 14px; border-radius: 12px; border: 1px solid rgba(56, 189, 248, 0.2); margin: 15px 0;'>
+            <p style='margin: 0; font-size: 0.7rem; color: #94a3b8; font-weight: 700; letter-spacing: 0.05em;'>AGEN TEROTORISASI:</p>
+            <p style='margin: 6px 0 0 0; font-size: 0.85rem; font-weight: 600; color: #38bdf8; word-break: break-all;'>{st.session_state.current_user}</p>
+            <div style='margin-top: 8px;'>
+                <span style='background: #0284c7; color: #fff; padding: 2px 8px; border-radius: 6px; font-size: 0.65rem; font-weight: 700;'>{st.session_state.current_role}</span>
+            </div>
         </div>
     """, unsafe_allow_html=True)
     
@@ -227,10 +246,10 @@ with st.sidebar:
     st.divider()
     st.markdown("### 📂 Arsip Kasus")
     if len(st.session_state.history) == 0:
-        st.caption("Belum ada arsip investigasi tersimpan.")
+        st.caption("Belum ada arsip investigasi.")
     else:
         for i, item in enumerate(st.session_state.history):
-            if st.button(f"📁 {item['target'][:22]}...", key=f"hist_{i}"):
+            if st.button(f"📁 {item['target'][:20]}...", key=f"hist_{i}"):
                 st.session_state.active_report = item['result']
                 st.session_state.active_target = item['target']
 
@@ -257,12 +276,12 @@ with st.sidebar:
 
 # Tampilan Konten Utama
 st.markdown("<h1>🕵️‍♂️ CyberIntel AI: Web Intelligence</h1>", unsafe_allow_html=True)
-st.markdown("<p style='color: #94a3b8; font-size: 1.05rem; margin-top: -10px; margin-bottom: 25px;'>Sistem investigasi berbasis AI cerdas untuk ekstraksi data web, riset kompetitor, dan analisis intelijen mendalam.</p>", unsafe_allow_html=True)
+st.markdown("<p style='color: #94a3b8; font-size: 1.05rem; margin-bottom: 30px;'>Sistem investigasi berbasis AI cerdas untuk ekstraksi data web, riset kompetitor, dan analisis intelijen mendalam.</p>", unsafe_allow_html=True)
 
 with st.form("scraper_form"):
     target_query = st.text_input(
         "Target Investigasi / Topik Web:",
-        placeholder="Contoh: Analisis tren perilaku konsumen digital terbaru"
+        placeholder="Contoh: Analisis tren harga produk teknologi terbaru"
     )
     
     task_type = st.selectbox(
@@ -316,8 +335,7 @@ if submitted:
                 st.error(f"Gagal terhubung ke jaringan AI: {e}")
 
 if "active_report" in st.session_state:
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown('<div class="report-container">', unsafe_allow_html=True)
+    st.markdown('<div class="report-card">', unsafe_allow_html=True)
     col1, col2 = st.columns([3, 1])
     with col1:
         st.markdown(f"### 🗂️ Berkas Laporan: *{st.session_state.get('active_target', '')}*")
